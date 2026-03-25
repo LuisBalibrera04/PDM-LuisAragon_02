@@ -1,16 +1,32 @@
 package com.example.laboratorio_02
 
+import android.R.attr.entries
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.laboratorio_02.ui.theme.Laboratorio_02Theme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Laboratorio_02Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    App(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -30,18 +45,65 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    Laboratorio_02Theme {
-        Greeting("Android")
+fun App(modifier: Modifier = Modifier) {
+    var usuario: MutableState<String> = remember { mutableStateOf("") }
+    val lista_usuarios = remember { mutableStateListOf("") }
+    Column() {
+        TextField(
+            value = usuario.value,
+            onValueChange = { usuario.value = it },
+            label = { Text("Escribe tu nombre") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = {
+                lista_usuarios.add(usuario.value)
+            }
+        )
+        {
+            Text(text = "Guardar")
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Listado de nombres y posicion en la lista",
+                minLines = 2,
+                modifier = Modifier.width(200.dp)
+            )
+            Button(
+                onClick = {lista_usuarios.clear()
+                    usuario.value = ""
+                },
+            ) {
+                Text(
+                    text = "Limpiar"
+
+                )
+            }
+        }
+        LazyColumn {
+            itemsIndexed(lista_usuarios.toList()) { index, item ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = item
+                    )
+                    Text(
+                        text = (index + 1).toString()
+                    )
+                }
+            }
+        }
     }
 }
